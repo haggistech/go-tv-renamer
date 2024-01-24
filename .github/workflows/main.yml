@@ -38,3 +38,15 @@ jobs:
         run: |
           export version=$(echo ${{ steps.latest.outputs.name }} | sed 's/^v//')
           echo ::set-output name=name::$version
+      - name: Commit Version Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[skip ci] Update version to v${{ steps.version.outputs.value }}"
+      - name: Create Release
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          allowUpdates: true
+          draft: false
+          makeLatest: true
+          tag: v${{ steps.version.outputs.value }}
+          name: v${{ steps.version.outputs.value }}
