@@ -77,8 +77,27 @@ func main() {
     if len(result) > 1 {
         fmt.Println("\n More than one result, Please Choose:")
 		fmt.Scan(&n)
-		fmt.Println(s[n])
+		//fmt.Println(s[n])
+		showid := s[n]
+		searchurl := fmt.Sprintf("https://api.tvmaze.com/shows/%d", showid)
 
+		response, err := http.Get(searchurl)
+
+		if err != nil {
+			fmt.Print(err.Error())
+			os.Exit(1)
+		}
+	
+		responseData, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(string(responseData))
+
+		var showresult []Show
+		if err := json.Unmarshal(responseData, &showresult); err != nil { // Parse []byte to go struct pointer
+			fmt.Println("Can not unmarshal JSON")
+		}
 }
 }
 // PrettyPrint to print struct in a readable way
